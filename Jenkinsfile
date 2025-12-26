@@ -2,21 +2,25 @@ pipeline {
     agent any
 
     stages {
-        stage('Build') {
+        stage('Checkout Code') {
             steps {
-                echo 'Build stage running'
+                git branch: 'main', url: 'https://github.com/YOUR_USERNAME/YOUR_REPO.git'
             }
         }
 
-        stage('Test') {
+        stage('Build Docker Image') {
             steps {
-                echo 'Test stage running'
+                sh 'docker build -t myapp:latest .'
             }
         }
 
-        stage('Deploy') {
+        stage('Run Container') {
             steps {
-                echo 'Deploy stage running'
+                sh '''
+                docker stop myapp || true
+                docker rm myapp || true
+                docker run -d -p 8081:80 --name myapp myapp:latest
+                '''
             }
         }
     }
