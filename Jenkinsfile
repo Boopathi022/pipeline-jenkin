@@ -30,9 +30,18 @@ pipeline {
                 sh '''
                 docker stop myapp || true
                 docker rm myapp || true
-                docker run -d -p 8081:80 --name myapp ${IMAGE_NAME}:${IMAGE_VERSION}
+                docker run -d -p 8081:80 --name myapp ${IMAGE_NAME}:${IMAGE_VERSION} >/dev/null 2>&1
                 '''
             }
+        }
+    }
+
+    post {
+        success {
+            echo "Deployment successful"
+        }
+        failure {
+            echo "Deployment failed"
         }
     }
 }
