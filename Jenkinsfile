@@ -32,6 +32,16 @@ pipeline {
                 sh 'docker run -d -p 8081:80 --name myapp myapp:${IMAGE_VERSION}'
             }
         }
+        stage('Docker Debug') {
+            steps {
+                sh '''
+                whoami
+                docker --version
+                docker ps
+                '''
+            }
+        }
+
     }
 }
 
