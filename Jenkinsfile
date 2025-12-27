@@ -1,6 +1,8 @@
 pipeline {
     agent any
-
+    options {
+        wipeWorkspace()
+    }
     environment {
         IMAGE_NAME = "myapp"
         IMAGE_VERSION = "${BUILD_NUMBER}"
@@ -15,9 +17,7 @@ pipeline {
 
         stage('Build Image') {
             steps {
-                sh '''
-                docker build -t ${IMAGE_NAME}:${IMAGE_VERSION} .
-                '''
+                sh 'docker build -t ${IMAGE_NAME}:${IMAGE_VERSION} .'
             }
         }
 
@@ -32,4 +32,3 @@ pipeline {
         }
     }
 }
-
