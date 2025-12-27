@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_VERSION = "${env.BUILD_NUMBER}"
+    }
+
     stages {
         stage('Checkout Code') {
             steps {
@@ -10,18 +14,24 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t myapp:latest .'
+                sh 'docker build -t myapp:${IMAGE_VERSION} .'
             }
         }
 
-        stage('Run Container') {
+        stage('Stop Old Container') {
             steps {
                 sh '''
                 docker stop myapp || true
                 docker rm myapp || true
-                docker run -d -p 8081:80 --name myapp myapp:latest
                 '''
+            }
+        }
+
+        stage('Run New Container') {
+            steps {
+                sh 'docker run -d -p 8081:80 --name myapp myapp:${IMAGE_VERSION}'
             }
         }
     }
 }
+
