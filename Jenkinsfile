@@ -1,47 +1,32 @@
 pipeline {
     agent any
 
-    environment {
-        IMAGE_VERSION = "${env.BUILD_NUMBER}"
-    }
-
     stages {
-        stage('Checkout Code') {
-            steps {
-                git branch: 'main', url: 'https://github.com/Boopathi022/pipeline-jenkin.git'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t myapp:${IMAGE_VERSION} .'
+                sh '''
+                docker build -t myapp:latest .
+                '''
             }
         }
 
-        stage('Stop Old Container') {
+        stage('Run Container') {
             steps {
                 sh '''
                 docker stop myapp || true
                 docker rm myapp || true
+                docker run -d -p 8080:80 --name myapp myapp:latest
                 '''
             }
         }
 
-        stage('Run New Container') {
-            steps {
-                sh 'docker run -d -p 8081:80 --name myapp myapp:${IMAGE_VERSION}'
-            }
-        }
-        stage('Docker Debug') {
+        stage('Debug') {
             steps {
                 sh '''
-                whoami
-                docker --version
-                docker ps
+                docker ps -a
                 '''
             }
         }
-
     }
 }
 
