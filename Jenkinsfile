@@ -2,36 +2,34 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "myapp"
-        IMAGE_VERSION = "${BUILD_NUMBER}"
+        IMAGE_VERSION = "${env.BUILD_NUMBER}"
     }
 
     stages {
-        stage('Clean Workspace') {
+        stage('Checkout Code') {
             steps {
-                sh 'rm -rf *'
+                git branch: 'main', url: 'https://github.com/YOUR_USERNAME/YOUR_REPO.git'
             }
         }
 
-        stage('Checkout') {
+        stage('Build Docker Image') {
             steps {
-                checkout scm
+                sh 'docker build -t myapp:${IMAGE_VERSION} .'
             }
         }
 
-        stage('Build Image') {
-            steps {
-                sh 'docker build -t ${IMAGE_NAME}:${IMAGE_VERSION} .'
-            }
-        }
-
-        stage('Run Container') {
+        stage('Stop Old Container') {
             steps {
                 sh '''
                 docker stop myapp || true
                 docker rm myapp || true
-                docker run -d -p 8081:80 --name myapp ${IMAGE_NAME}:${IMAGE_VERSION}
                 '''
+            }
+        }
+
+        stage('Run New Container') {
+            steps {
+                sh 'docker run -d -p 8081:80 --name myapp myapp:${IMAGE_VERSION}'
             }
         }
     }
