@@ -1,11 +1,22 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = "myapp"
+        IMAGE_VERSION = "${BUILD_NUMBER}"
+    }
+
     stages {
-        stage('Build Docker Image') {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build Image') {
             steps {
                 sh '''
-                docker build -t myapp:latest .
+                docker build -t ${IMAGE_NAME}:${IMAGE_VERSION} .
                 '''
             }
         }
@@ -15,15 +26,7 @@ pipeline {
                 sh '''
                 docker stop myapp || true
                 docker rm myapp || true
-                docker run -d -p 8080:80 --name myapp myapp:latest
-                '''
-            }
-        }
-
-        stage('Debug') {
-            steps {
-                sh '''
-                docker ps -a
+                docker run -d -p 8081:80 --name myapp ${IMAGE_NAME}:${IMAGE_VERSION}
                 '''
             }
         }
