@@ -3,28 +3,34 @@ pipeline {
 
     environment {
         IMAGE_NAME = "myapp"
-        IMAGE_TAG  = "${BUILD_NUMBER}"
+        IMAGE_VERSION = "${BUILD_NUMBER}"
     }
 
     stages {
+        stage('Clean Workspace') {
+            steps {
+                sh 'rm -rf *'
+            }
+        }
+
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/Boopathi022/pipeline-jenkin.git'
+                checkout scm
             }
         }
 
         stage('Build Image') {
             steps {
-                sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
+                sh 'docker build -t ${IMAGE_NAME}:${IMAGE_VERSION} .'
             }
         }
 
-        stage('Deploy') {
+        stage('Run Container') {
             steps {
                 sh '''
                 docker stop myapp || true
                 docker rm myapp || true
-                docker run -d -p 8082:80 --name myapp $IMAGE_NAME:$IMAGE_TAG
+                docker run -d -p 8081:80 --name myapp ${IMAGE_NAME}:${IMAGE_VERSION}
                 '''
             }
         }
