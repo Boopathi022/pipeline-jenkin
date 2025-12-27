@@ -1,10 +1,28 @@
 pipeline {
     agent any
+
     stages {
-        stage('Test Docker') {
+        stage('Checkout Code') {
             steps {
-                sh 'docker run --rm nginx:alpine'
+                git branch: 'main', url: 'https://github.com/YOUR_USERNAME/YOUR_REPO.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t myapp:latest .'
+            }
+        }
+
+        stage('Run Container') {
+            steps {
+                sh '''
+                docker stop myapp || true
+                docker rm myapp || true
+                docker run -d -p 8081:80 --name myapp myapp:latest
+                '''
             }
         }
     }
 }
+
