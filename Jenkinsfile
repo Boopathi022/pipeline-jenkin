@@ -1,14 +1,18 @@
 pipeline {
     agent any
-    options {
-        wipeWorkspace()
-    }
+
     environment {
         IMAGE_NAME = "myapp"
         IMAGE_VERSION = "${BUILD_NUMBER}"
     }
 
     stages {
+        stage('Clean Workspace') {
+            steps {
+                sh 'rm -rf *'
+            }
+        }
+
         stage('Checkout') {
             steps {
                 checkout scm
@@ -32,3 +36,4 @@ pipeline {
         }
     }
 }
+
