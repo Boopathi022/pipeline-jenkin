@@ -25,7 +25,7 @@ pipeline {
             }
         }
 
-        stage('Run Container') {
+        stage('Deploy') {
             steps {
                 sh '''
                 docker stop myapp || true
