@@ -25,12 +25,14 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
+        stage('Deploy to EC2') {
             steps {
                 sh '''
+                ssh ubuntu@13.201.22.21 "
                 docker stop myapp || true
                 docker rm myapp || true
                 docker run -d -p 8081:80 --name myapp ${IMAGE_NAME}:${IMAGE_VERSION}
+                "
                 '''
             }
         }
