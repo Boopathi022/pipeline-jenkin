@@ -1,16 +1,27 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = "myapp"
+        IMAGE_VERSION = "${BUILD_NUMBER}"
+    }
+
     stages {
-        stage('Checkout Code') {
+        stage('Clean Workspace') {
             steps {
-                git branch: 'main', url: 'https://github.com/Boopathi022/pipeline-jenkin.git'
+                sh 'rm -rf *'
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Checkout') {
             steps {
-                sh 'docker build -t myapp:latest .'
+                checkout scm
+            }
+        }
+
+        stage('Build Image') {
+            steps {
+                sh 'docker build -t ${IMAGE_NAME}:${IMAGE_VERSION} .'
             }
         }
 
@@ -19,10 +30,9 @@ pipeline {
                 sh '''
                 docker stop myapp || true
                 docker rm myapp || true
-                docker run -d -p 8081:80 --name myapp myapp:latest
+                docker run -d -p 8081:80 --name myapp ${IMAGE_NAME}:${IMAGE_VERSION}
                 '''
             }
         }
     }
 }
-
