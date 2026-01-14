@@ -12,22 +12,21 @@ Any new code push to GitHub automatically triggers the pipeline and deploys the 
 
 
 
----
 
 🧠 CI/CD Workflow
 
-GitHub (Code Push)
-        ↓
-Jenkins Job (Pipeline)
-        ↓
-Docker Image Build
-        ↓
-SSH Deployment to EC2
-        ↓
-Application Live on AWS
+    GitHub (Code Push)
+            ↓
+    Jenkins Job (Pipeline)
+            ↓
+    Docker Image Build
+            ↓
+    SSH Deployment to EC2
+            ↓
+    Application Live on AWS
 
 
----
+
 
 🛠 Tools Used
 
@@ -35,24 +34,22 @@ Tool	      Purpose
 
 GitHub	    Source code repository
 Jenkins	    CI/CD automation
-Docker  	  Build & run application
+Docker      Build & run application
 AWS EC2	    Deployment server
-SSH	Remote  Deployment
+SSH	    Remote  Deployment
 
 
 
----
 
 📁 Repository Contents
 
-.
-├── Dockerfile
-├── index.html
-├── Jenkinsfile
-└── README.md
+    .
+    ├── Dockerfile
+    ├── index.html
+    ├── Jenkinsfile
+    └── README.md
 
 
----
 
 ⚙️ Jenkins Job Configuration (Already Done)
 
@@ -68,7 +65,6 @@ SSH	Remote  Deployment
 
 
 
----
 
 📜 Jenkins Pipeline Stages
 
@@ -87,17 +83,16 @@ Runs the new container on port 8080
 ✔ Zero manual intervention.
 
 
----
 
 ▶️ Deployment Verification
 
 Open in browser:
-http://<EC2_PUBLIC_IP>:8080
+
+    http://<EC2_PUBLIC_IP>:8080
 
 🎉 Application successfully deployed via Jenkins CI/CD pipeline.
 
 
----
 
 🔄 Automatic Deployment
 
@@ -112,7 +107,6 @@ Description:
 Implemented an automated Jenkins CI/CD pipeline that builds Docker images and deploys containerized applications to AWS EC2. The pipeline is triggered automatically by GitHub commits and performs end-to-end deployment using SSH.
 
 
----
 
 🧠 Key Skills Demonstrated
 
@@ -124,9 +118,8 @@ AWS EC2 application hosting
 Production-style DevOps workflow
 
 
----
 
 👤 Author
 
-Boopathi
-DevOps Engineer (Fresher) | CI/CD | Docker | AWS
+     Mahendra Boopathi R 
+     DevOps Engineer (Fresher) | CI/CD | Docker | AWS
