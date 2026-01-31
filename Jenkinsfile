@@ -7,40 +7,47 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps { checkout scm }
+        stage('Clean Workspace') {
+            steps {
+                sh 'rm -rf *'
+            }
         }
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('sonarqube') {
+                    sh '''
+                    sonar-scanner \
+                    -Dsonar.projectKey=myapp \
+                    -Dsonar.sources=.
+                    '''
+                   }
+                }
+             }
 
         stage('Build Image') {
-            steps { sh "docker build -t ${IMAGE_NAME}:${IMAGE_VERSION} ." }
-        }
-
-        stage('Deploy to Dev') {
             steps {
-                sh """
-                ssh ubuntu@3.7.68.139 '
-                docker stop myapp || true
-                docker rm myapp || true
-                docker run -d -p 8082:80 --name myapp ${IMAGE_NAME}:${IMAGE_VERSION}'
-                """
+                sh 'docker build -t ${IMAGE_NAME}:${IMAGE_VERSION} .'
             }
         }
 
-        stage('Test on Dev') {
+        stage('Deploy to EC2') {
             steps {
-                sh 'echo "Tests Passed on Dev"'  // Later: run real tests
-            }
-        }
-
-        stage('Deploy to Prod') {
-            steps {
-                sh """
-                ssh ubuntu@3.7.248.124 '
+                sh '''
+                "
                 docker stop myapp || true
                 docker rm myapp || true
-                docker run -d -p 8083:80 --name myapp ${IMAGE_NAME}:${IMAGE_VERSION}'
-                """
+                docker run -d -p 8081:80 --name myapp ${IMAGE_NAME}:${IMAGE_VERSION}
+                "
+                '''
             }
         }
     }
 }
+
