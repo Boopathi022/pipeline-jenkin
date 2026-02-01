@@ -9,34 +9,33 @@ pipeline {
     stages {
         stage('Clean Workspace') {
             steps {
-                sh 'rm -rf *'
+                // Cleaner way to wipe the workspace
+                cleanWs() 
             }
         }
 
         stage('Checkout') {
             steps {
+                // This will use the branch defined in your Job UI
                 checkout scm
             }
         }
 
-
         stage('Build Image') {
             steps {
-                sh 'docker build -t ${IMAGE_NAME}:${IMAGE_VERSION} .'
+                sh "docker build -t ${IMAGE_NAME}:${IMAGE_VERSION} ."
             }
         }
 
         stage('Deploy to EC2') {
             steps {
+                // Removed the extra double quotes that cause syntax errors
                 sh '''
-                "
                 docker stop myapp || true
                 docker rm myapp || true
                 docker run -d -p 9000:80 --name myapp ${IMAGE_NAME}:${IMAGE_VERSION}
-                "
                 '''
             }
         }
     }
 }
-
