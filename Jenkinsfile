@@ -19,17 +19,6 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('sonarqube') {
-                    sh '''
-                    sonar-scanner \
-                    -Dsonar.projectKey=myapp \
-                    -Dsonar.sources=.
-                    '''
-                   }
-                }
-             }
 
         stage('Build Image') {
             steps {
